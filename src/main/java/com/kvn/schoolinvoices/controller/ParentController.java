@@ -37,7 +37,7 @@ public class ParentController {
     @PreAuthorize("hasRole('SCHOOL_ADMIN')")
     public Page<ParentDTO> searchParents(
             @RequestBody ParentSearchDTO searchDTO,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam("page") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
