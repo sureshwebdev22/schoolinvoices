@@ -1,6 +1,7 @@
 package com.kvn.schoolinvoices;
 
 import com.kvn.schoolinvoices.entity.Parent;
+import com.kvn.schoolinvoices.entity.Student;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -45,4 +46,13 @@ public class AppUser {
           orphanRemoval = true
   )
   private List<Parent> parents;
+
+  @OneToMany(
+          mappedBy = "user",
+          cascade = CascadeType.ALL,
+          orphanRemoval = true
+  )
+  private List<Student> students;
+
+
 }
