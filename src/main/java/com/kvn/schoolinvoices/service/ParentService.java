@@ -61,7 +61,8 @@ public class ParentService {
                 .map(parent -> new ParentDTO(
                         parent.getFatherName(),
                         parent.getMotherName(),
-                        parent.getAddress()
+                        parent.getAddress(),
+                        parent.getParentId()
                 ));
     }
 }
