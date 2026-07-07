@@ -43,9 +43,12 @@ public class Student {
     @Column(name = "status")
     private StudentStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column
+    private String createdBy;
+
+  /*  @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = false)
-    private Parent parent;
+    private Parent parent; */
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

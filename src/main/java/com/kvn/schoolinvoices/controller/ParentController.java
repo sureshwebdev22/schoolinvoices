@@ -1,6 +1,7 @@
 package com.kvn.schoolinvoices.controller;
 
 
+import com.kvn.schoolinvoices.dto.AppUserDto;
 import com.kvn.schoolinvoices.dto.ParentDTO;
 import com.kvn.schoolinvoices.dto.ParentSearchDTO;
 import com.kvn.schoolinvoices.entity.Parent;
@@ -35,8 +36,8 @@ public class ParentController {
 
     @PostMapping("/parents/search")
     @PreAuthorize("hasRole('SCHOOL_ADMIN')")
-    public Page<ParentDTO> searchParents(
-            @RequestBody ParentSearchDTO searchDTO,
+    public Page<AppUserDto> searchParents(
+            @RequestBody AppUserDto searchDTO,
             @RequestParam("page") int page,
             @RequestParam(defaultValue = "10") int size) {
 

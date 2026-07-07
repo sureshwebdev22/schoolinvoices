@@ -5,6 +5,7 @@ import com.kvn.schoolinvoices.entity.Student;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,24 @@ public class AppUser {
   @Column(nullable = false)
   private String password;
 
+  @Column(name = "date_of_birth")
+  private LocalDate dateOfBirth;
+
+  @Column
+  private String gender;
+
+  @Column(nullable = true)
+  private String mobileNo;
+
+  @Column(length = 100)
+  private String role;
+
+  @Column(length = 100)
+  private String address;
+
+  @Column(length = 100)
+  private String createdBy;
+
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_roles",
@@ -40,12 +59,12 @@ public class AppUser {
   @Builder.Default
   private Set<Role> roles = new HashSet<>();
 
-  @OneToMany(
+ /* @OneToMany(
           mappedBy = "user",
           cascade = CascadeType.ALL,
           orphanRemoval = true
   )
-  private List<Parent> parents;
+  private List<Parent> parents; */
 
   @OneToMany(
           mappedBy = "user",

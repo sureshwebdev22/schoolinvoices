@@ -6,6 +6,7 @@ import com.kvn.schoolinvoices.dto.StudentDTO;
 import com.kvn.schoolinvoices.entity.Parent;
 import com.kvn.schoolinvoices.entity.Student;
 import com.kvn.schoolinvoices.entity.StudentStatus;
+import com.kvn.schoolinvoices.service.repository.ParentRepository;
 import com.kvn.schoolinvoices.service.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +15,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private ParentRepository parentRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -45,16 +51,23 @@ public class StudentService {
                 .className(student.getClassName())
                 .sectionName(student.getSectionName())
                 .status(student.getStatus().name())
+         //       .parentName(student.getParent().getFatherName() +"," + student.getParent().getMotherName())
+           //     .parentId(student.getParent().getParentId())
                 .build();
     }
 
-    public StudentDTO getStudentById(Long id) {
+  /*  public StudentDTO getStudentById(Long id) {
+       Optional<Student> student = studentRepository.findById(id);
+   //    Parent parent = student.get().getParent();
+       System.out.println("father : "+parent.getFatherName());
+
+
         return studentRepository.findById(id).map(this::convertToDto)
                 .orElseThrow(() ->
                         new RuntimeException("Student not found with id: " + id));
-    }
+    } */
 
-    public StudentDTO updateStudent(Long id, StudentDTO student) {
+  /*  public StudentDTO updateStudent(Long id, StudentDTO student) {
 
         Student existingStudent = studentRepository.findById(id)
                 .orElseThrow(() ->
@@ -69,10 +82,15 @@ public class StudentService {
         existingStudent.setSectionName(student.getSectionName());
         existingStudent.setStatus(StudentStatus.valueOf(student.getStatus()));
 
+       Parent parent = existingStudent.getParent();
+       String[] parentsName = student.getParentName().split(",");
+       parent.setFatherName(parentsName[0]);
+       parent.setMotherName(parentsName[1]);
+
         studentRepository.save(existingStudent);
 
         return student;
-    }
+    } */
 
     public StudentDTO createStudent(StudentDTO dto) {
 
@@ -86,8 +104,8 @@ public class StudentService {
                 .getName();
 
 
-        AppUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+      //  AppUser user = userRepository.findByEmail(email)
+          //      .orElseThrow(() -> new RuntimeException("User not found"));
 
         Student student = new Student();
         student.setAdmissionNo(dto.getAdmissionNo());
@@ -98,10 +116,15 @@ public class StudentService {
         student.setClassName(dto.getClassName());
         student.setSectionName(dto.getSectionName());
         student.setStatus(StudentStatus.valueOf(dto.getStatus()));
-        Parent parent = new Parent();
+        student.setCreatedBy(email);
+        AppUser appUser = new AppUser();
+        appUser.setId(dto.getParentId());
+        appUser.setCreatedBy(email);
+      /*  Parent parent = new Parent();
         parent.setParentId(dto.getParentId());
-        student.setParent(parent);
-        student.setUser(user);
+        student.setParent(parent); */
+        student.setUser(appUser);
+    //    student.set
 
         Student savedStudent = studentRepository.save(student);
 

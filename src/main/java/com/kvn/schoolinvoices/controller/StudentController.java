@@ -45,7 +45,7 @@ public class StudentController {
                         pageable));
     }
 
-    @GetMapping("/students/{id}")
+ /*   @GetMapping("/students/{id}")
     public ResponseEntity<StudentDTO> getStudentById(@PathVariable Long id) {
 
         StudentDTO student = studentService.getStudentById(id);
@@ -72,7 +72,7 @@ public class StudentController {
                 Map.of("message", "Student deleted successfully")
         );
      //   return ResponseEntity.ok("deletedStudent");
-    }
+    } */
 
     @PostMapping("/students")
     @PreAuthorize("hasRole('SCHOOL_ADMIN')")

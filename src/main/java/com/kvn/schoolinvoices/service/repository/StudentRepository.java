@@ -11,9 +11,9 @@ import java.util.List;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    List<Student> findByParentParentId(Long parentId);
+ //   List<Student> findByParentParentId(Long parentId);
 
-    Student findByAdmissionNo(String admissionNo);
+   // Student findByAdmissionNo(String admissionNo);
 
     @Query("""
             SELECT s
