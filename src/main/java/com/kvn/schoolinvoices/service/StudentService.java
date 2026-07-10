@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class StudentService {
 
@@ -98,10 +100,15 @@ public class StudentService {
         student.setClassName(dto.getClassName());
         student.setSectionName(dto.getSectionName());
         student.setStatus(StudentStatus.valueOf(dto.getStatus()));
-        Parent parent = new Parent();
-        parent.setParentId(dto.getParentId());
+        student.setCreatedBy(email);
+    //    Parent parent = new Parent();
+     //   parent.setParentId(dto.getParentId());
     //    student.setParent(parent);
-        student.setUser(user);
+     //  Optional<AppUser> user1=  userRepository.findById(dto.getParentId());
+
+       AppUser appUser = new AppUser();
+       appUser.setId(dto.getParentId());
+        student.setUser(appUser);
 
         Student savedStudent = studentRepository.save(student);
 
