@@ -100,7 +100,7 @@ public class StudentService {
         student.setStatus(StudentStatus.valueOf(dto.getStatus()));
         Parent parent = new Parent();
         parent.setParentId(dto.getParentId());
-        student.setParent(parent);
+    //    student.setParent(parent);
         student.setUser(user);
 
         Student savedStudent = studentRepository.save(student);

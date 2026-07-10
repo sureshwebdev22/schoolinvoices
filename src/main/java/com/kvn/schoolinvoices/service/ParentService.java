@@ -2,6 +2,7 @@ package com.kvn.schoolinvoices.service;
 
 import com.kvn.schoolinvoices.AppUser;
 import com.kvn.schoolinvoices.UserRepository;
+import com.kvn.schoolinvoices.dto.AppUserDto;
 import com.kvn.schoolinvoices.dto.ParentDTO;
 import com.kvn.schoolinvoices.dto.ParentSearchDTO;
 import com.kvn.schoolinvoices.entity.Parent;
@@ -30,7 +31,7 @@ public class ParentService {
                 .getName();
 
 
-      AppUser user = userRepository.findByEmail(email)
+        AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Parent parent = new Parent();
@@ -45,14 +46,20 @@ public class ParentService {
         );
 
 
-     //   return null;
+        //   return null;
     }
 
-    public Page<ParentDTO> searchParents(
-            ParentSearchDTO searchDTO,
+    public Page<AppUserDto> searchParents(
+            AppUserDto appUserDto,
             Pageable pageable) {
 
-        return parentRepository
+        return   userRepository.findByFullNameContainingIgnoreCaseAndEmailContainingIgnoreCaseAndMobileNoContainingIgnoreCaseAndAddressContainingIgnoreCase(
+                appUserDto.getFullName(), appUserDto.getEmail(), appUserDto.getMobileNo(),
+                appUserDto.getAddress(), pageable
+        ).map(appUser -> new AppUserDto(appUser.getId(), appUser.getFullName(), appUser.getEmail(),appUser.getMobileNo(),appUser.getAddress()));
+        // return byFullNameContainingIgnoreCaseAndEmailContainingIgnoreCaseAndMobileNoContainingIgnoreCaseAndAddressContainingIgnoreCase;
+
+      /*  return parentRepository
                 .findByFatherNameContainingIgnoreCaseAndMotherNameContainingIgnoreCaseAndAddressContainingIgnoreCase(
                         searchDTO.getFatherName() == null ? "" : searchDTO.getFatherName(),
                         searchDTO.getMotherName() == null ? "" : searchDTO.getMotherName(),
@@ -61,7 +68,9 @@ public class ParentService {
                 .map(parent -> new ParentDTO(
                         parent.getFatherName(),
                         parent.getMotherName(),
-                        parent.getAddress()
-                ));
+                        parent.getAddress(),
+                        parent.getParentId()
+                )); */
+        //  return null;
     }
 }
