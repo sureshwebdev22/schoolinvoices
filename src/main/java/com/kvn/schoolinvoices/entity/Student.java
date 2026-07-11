@@ -30,9 +30,6 @@ public class Student {
     @Column(name = "gender", length = 1)
     private String gender;
 
-    @Column(name = "dob")
-    private LocalDate dob;
-
     @Column(name = "class_name")
     private String className;
 
@@ -45,6 +42,7 @@ public class Student {
 
     @Column
     private String createdBy;
+
 
   /*  @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = false)

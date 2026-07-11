@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -43,7 +44,7 @@ public class StudentService {
                 .firstName(student.getFirstName())
                 .lastName(student.getLastName())
                 .gender(student.getGender())
-                .dob(student.getDob())
+            //    .dob(LocalDate.parse(student.getDob()))
                 .className(student.getClassName())
                 .sectionName(student.getSectionName())
                 .status(student.getStatus().name())
@@ -66,7 +67,7 @@ public class StudentService {
         existingStudent.setFirstName(student.getFirstName());
         existingStudent.setLastName(student.getLastName());
         existingStudent.setGender(student.getGender());
-        existingStudent.setDob(student.getDob());
+    //    existingStudent.setDob(String.valueOf(student.getDob()));
         existingStudent.setClassName(student.getClassName());
         existingStudent.setSectionName(student.getSectionName());
         existingStudent.setStatus(StudentStatus.valueOf(student.getStatus()));
@@ -87,16 +88,12 @@ public class StudentService {
                 .getAuthentication()
                 .getName();
 
-
-        AppUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
         Student student = new Student();
         student.setAdmissionNo(dto.getAdmissionNo());
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setGender(dto.getGender());
-        student.setDob(dto.getDob());
+     //   student.setDob(String.valueOf(dto.getDob()));
         student.setClassName(dto.getClassName());
         student.setSectionName(dto.getSectionName());
         student.setStatus(StudentStatus.valueOf(dto.getStatus()));
