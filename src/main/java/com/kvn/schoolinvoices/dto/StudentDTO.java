@@ -24,4 +24,5 @@ public class StudentDTO {
     private String sectionName;
     private String status;
     private Long parentId;
+    private String fullName;
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "students")
@@ -54,4 +55,7 @@ public class Student {
             nullable = false
     )
     private AppUser user;
+
+    @OneToMany(mappedBy = "student")
+    private List<Invoice> invoices;
 }

@@ -45,14 +45,14 @@ public class StudentController {
                         pageable));
     }
 
- /*   @GetMapping("/students/{id}")
+    @GetMapping("/students/{id}")
     public ResponseEntity<StudentDTO> getStudentById(@PathVariable Long id) {
 
         StudentDTO student = studentService.getStudentById(id);
         return ResponseEntity.ok(student);
     }
 
-    @PutMapping("/students/{id}")
+/*    @PutMapping("/students/{id}")
     public ResponseEntity<StudentDTO> updateStudent(
             @PathVariable Long id,
             @RequestBody StudentDTO student) {

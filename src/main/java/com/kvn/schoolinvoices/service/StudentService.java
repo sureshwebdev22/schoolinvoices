@@ -44,6 +44,8 @@ public class StudentService {
                 .firstName(student.getFirstName())
                 .lastName(student.getLastName())
                 .gender(student.getGender())
+                .fullName(        student.getUser().getFullName())
+
             //    .dob(LocalDate.parse(student.getDob()))
                 .className(student.getClassName())
                 .sectionName(student.getSectionName())
