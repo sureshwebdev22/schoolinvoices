@@ -5,10 +5,9 @@ import com.kvn.schoolinvoices.entity.Invoice;
 import com.kvn.schoolinvoices.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/schooladmin")
@@ -23,6 +22,11 @@ public class InvoiceController {
 
         return ResponseEntity.ok(invoiceService.save(dto));
 
+    }
+
+    @GetMapping("/invoices/next-number")
+    public ResponseEntity<Map<String,String>> getNextInvoiceNumber() {
+        return ResponseEntity.ok(Map.of("nextInvoiceNumber",invoiceService.getNextInvoiceNumber()));
     }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,5 +80,16 @@ public class InvoiceService {
         return invoiceRepository.save(savedInvoice);
 
     }
+
+    public String getNextInvoiceNumber() {
+
+        Long nextId = invoiceRepository.getNextId();
+
+        return String.format("INV-%d-%06d",
+                Year.now().getValue(),
+                nextId);
+    }
+
+
 
 }
