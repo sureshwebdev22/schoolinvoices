@@ -2,14 +2,18 @@ package com.kvn.schoolinvoices.service;
 
 import com.kvn.schoolinvoices.dto.InvoiceDTO;
 import com.kvn.schoolinvoices.dto.InvoiceItemDTO;
+import com.kvn.schoolinvoices.dto.StudentDTO;
 import com.kvn.schoolinvoices.entity.Invoice;
 import com.kvn.schoolinvoices.entity.InvoiceItem;
 import com.kvn.schoolinvoices.entity.InvoiceStatus;
 import com.kvn.schoolinvoices.entity.Student;
 import com.kvn.schoolinvoices.service.repository.InvoiceRepository;
 import com.kvn.schoolinvoices.service.repository.StudentRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -28,7 +32,7 @@ public class InvoiceService {
     @Autowired
     private StudentRepository studentRepository;
 
-    public Invoice save(InvoiceDTO dto){
+    public Invoice save(InvoiceDTO dto) {
 
         Student student =
                 studentRepository.findById(dto.getStudentId())
@@ -45,7 +49,7 @@ public class InvoiceService {
 
         BigDecimal grandTotal = BigDecimal.ZERO;
 
-        for(InvoiceItemDTO itemDto : dto.getInvoiceItems()){
+        for (InvoiceItemDTO itemDto : dto.getInvoiceItems()) {
 
             InvoiceItem item = new InvoiceItem();
 
@@ -73,8 +77,8 @@ public class InvoiceService {
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
         savedInvoice.setInvoiceNumber(
-                "INV-"+ LocalDate.now().getYear()+"-"+
-                        String.format("%06d",savedInvoice.getInvoiceId())
+                "INV-" + LocalDate.now().getYear() + "-" +
+                        String.format("%06d", savedInvoice.getInvoiceId())
         );
 
         return invoiceRepository.save(savedInvoice);
@@ -91,5 +95,34 @@ public class InvoiceService {
     }
 
 
+    public Page<InvoiceDTO> searchInvoices(String search, Pageable pageable) {
+        return invoiceRepository.searchInvoices(search, pageable).map(this::convertToDto);
+    }
+
+    private InvoiceDTO convertToDto(Invoice invoice) {
+
+        InvoiceDTO build = InvoiceDTO.builder().invoiceID(invoice.getInvoiceId())
+                .invoiceNumber(invoice.getInvoiceNumber())
+
+                .invoiceDate(invoice.getInvoiceDate())
+                .dueDate(invoice.getDueDate())
+                .studentId(invoice.getStudent().getStudentId())
+                .invoiceItems(convertInvoiceItemsToDto(invoice.getInvoiceItems()))
+                .build();
+        return build;
+
+    }
+
+    private List<InvoiceItemDTO> convertInvoiceItemsToDto(List<InvoiceItem> invoiceItems) {
+       return invoiceItems.stream().map(this::convertInvoiceItemsToDto1).toList();
+    }
+
+    private InvoiceItemDTO convertInvoiceItemsToDto1(InvoiceItem invoiceItem) {
+        return InvoiceItemDTO.builder()
+                .feeType(invoiceItem.getFeeType())
+                .amount(invoiceItem.getAmount())
+                .discount(invoiceItem.getDiscount())
+                .build();
+    }
 
 }

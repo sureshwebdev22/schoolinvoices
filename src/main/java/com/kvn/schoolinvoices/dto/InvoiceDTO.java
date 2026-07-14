@@ -15,11 +15,16 @@ import java.util.List;
 @AllArgsConstructor
 public class InvoiceDTO {
 
-    private Long studentId;
+    private Long invoiceID;
 
     private LocalDate invoiceDate;
 
     private LocalDate dueDate;
+
+    private Long studentId;
+
+    private String invoiceNumber;
+
 
     private List<InvoiceItemDTO> invoiceItems;
 
