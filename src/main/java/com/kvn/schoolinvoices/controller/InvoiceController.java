@@ -6,6 +6,7 @@ import com.kvn.schoolinvoices.entity.Invoice;
 import com.kvn.schoolinvoices.service.InvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -34,21 +35,12 @@ public class InvoiceController {
         return ResponseEntity.ok(Map.of("nextInvoiceNumber",invoiceService.getNextInvoiceNumber()));
     }
 
-    @GetMapping     ("/invoices")
-    public ResponseEntity<Page<InvoiceDTO>> viewInvoices(@RequestParam(required = false)
-                                                    String search,
+    @GetMapping("/invoices")
+    public ResponseEntity<Page<InvoiceDTO>> viewInvoices(@RequestParam(required = false) String search, @RequestParam("page") int page,
+                                                         @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
 
-                                                         @PageableDefault(
-                                                        page = 0,
-                                                        size = 10,
-                                                        sort = "invoiceId",
-                                                        direction = Sort.Direction.ASC)
-                                                    Pageable pageable) {
-
-        return ResponseEntity.ok(
-                invoiceService.searchInvoices(
-                        search,
-                        pageable));
+        return ResponseEntity.ok(invoiceService.searchInvoices(search, pageable));
 
     }
 

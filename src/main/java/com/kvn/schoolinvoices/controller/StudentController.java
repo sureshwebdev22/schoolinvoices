@@ -1,11 +1,13 @@
 package com.kvn.schoolinvoices.controller;
 
 
+import com.kvn.schoolinvoices.dto.AppUserDto;
 import com.kvn.schoolinvoices.dto.StudentDTO;
 import com.kvn.schoolinvoices.service.StudentService;
 import com.kvn.schoolinvoices.service.repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -52,28 +54,6 @@ public class StudentController {
         return ResponseEntity.ok(student);
     }
 
-/*    @PutMapping("/students/{id}")
-    public ResponseEntity<StudentDTO> updateStudent(
-            @PathVariable Long id,
-            @RequestBody StudentDTO student) {
-
-         StudentDTO updatedStudent =
-                studentService.updateStudent(id, student);
-
-        return ResponseEntity.ok(updatedStudent);
-    }
-
-    @DeleteMapping("students/{id}")
-    public ResponseEntity<Map<String, String>> deleteStudent(
-            @PathVariable Long id) {
-
-                studentService.deleteStudent(id);
-        return ResponseEntity.ok(
-                Map.of("message", "Student deleted successfully")
-        );
-     //   return ResponseEntity.ok("deletedStudent");
-    } */
-
     @PostMapping("/students")
     @PreAuthorize("hasRole('SCHOOL_ADMIN')")
     public ResponseEntity<StudentDTO> createStudent(
@@ -81,6 +61,18 @@ public class StudentController {
 
         return ResponseEntity.ok(
                 studentService.createStudent(studentDTO));
+    }
+
+    @PostMapping("/students/search")
+    @PreAuthorize("hasRole('SCHOOL_ADMIN')")
+    public Page<StudentDTO> searchStudents(
+            @RequestBody StudentDTO searchDTO,
+            @RequestParam("page") int page,
+            @RequestParam(defaultValue = "10") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        return studentService.searchStudents(searchDTO, pageable);
     }
 
 }

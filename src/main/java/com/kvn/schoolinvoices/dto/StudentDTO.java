@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Builder
@@ -24,5 +25,17 @@ public class StudentDTO {
     private String sectionName;
     private String status;
     private Long parentId;
-    private String fullName;
+    private String parentName;
+    private List<InvoiceDTO> invoiceDTOList;
+
+
+    public StudentDTO(Long studentId, String admissionNo, String firstName, String lastName, String className, String sectionName ,String parentName) {
+        this.studentId = studentId;
+        this.admissionNo =admissionNo;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.className = className;
+        this.sectionName = sectionName;
+        this.parentName = parentName;
+    }
 }

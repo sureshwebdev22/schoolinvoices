@@ -2,7 +2,10 @@ package com.kvn.schoolinvoices.service;
 
 import com.kvn.schoolinvoices.AppUser;
 import com.kvn.schoolinvoices.UserRepository;
+import com.kvn.schoolinvoices.dto.AppUserDto;
+import com.kvn.schoolinvoices.dto.InvoiceDTO;
 import com.kvn.schoolinvoices.dto.StudentDTO;
+import com.kvn.schoolinvoices.entity.Invoice;
 import com.kvn.schoolinvoices.entity.Parent;
 import com.kvn.schoolinvoices.entity.Student;
 import com.kvn.schoolinvoices.entity.StudentStatus;
@@ -15,7 +18,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
@@ -38,19 +43,32 @@ public class StudentService {
 
     private StudentDTO convertToDto(Student student) {
 
+
         return StudentDTO.builder()
                 .studentId(student.getStudentId())
                 .admissionNo(student.getAdmissionNo())
                 .firstName(student.getFirstName())
                 .lastName(student.getLastName())
                 .gender(student.getGender())
-                .fullName(        student.getUser().getFullName())
+                .parentName(        student.getUser().getFullName())
 
             //    .dob(LocalDate.parse(student.getDob()))
                 .className(student.getClassName())
                 .sectionName(student.getSectionName())
                 .status(student.getStatus().name())
-                .build();
+            //    .invoiceDTOList(convertInvoicestDTOList(student.getInvoices()))
+               .build();
+    }
+
+    private List<InvoiceDTO> convertInvoicestDTOList(List<Invoice> invoices) {
+        return invoices.stream()
+                .map(this::convertToDto1)
+                .collect(Collectors.toList());
+    }
+
+    private InvoiceDTO convertToDto1(Invoice invoice) {
+        return InvoiceDTO.builder().invoiceID(invoice.getInvoiceId()).invoiceDate(invoice.getInvoiceDate()).
+                dueDate(invoice.getDueDate()).invoiceNumber(invoice.getInvoiceNumber()).build();
     }
 
     public StudentDTO getStudentById(Long id) {
@@ -121,5 +139,24 @@ public class StudentService {
         studentRepository.deleteById(id);
     }
 
+    public Page<StudentDTO> searchStudents(StudentDTO searchDTO, Pageable pageable) {
+        Page<StudentDTO> map = studentRepository.findByAdmissionNoContainingIgnoreCaseAndFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(
+                searchDTO.getAdmissionNo(), searchDTO.getFirstName(), searchDTO.getLastName()
+                , pageable
+        ).map(student -> new StudentDTO(student.getStudentId(), student.getAdmissionNo(), student.getFirstName(), student.getLastName(),
+                student.getClassName(), student.getSectionName(),student.getUser().getFullName()));
+        return map;
 
+    }
+
+
+   /* public Page<StudentDTO> searchParents(StudentDTO searchDTO, Pageable pageable) {
+        return   studentRepository.findByAdmissionNoContainingIgnoreCaseAndFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(
+                searchDTO.getAdmissionNo(), searchDTO.getFirstName(), searchDTO.getLastName(),
+                , pageable
+        ).map(student -> new StudentDTO(student.getStudentId(),student.getAdmissionNo(), student.getFirstName(), student.getLastName(),
+                student.getClassName(),student.getSectionName());
+
+        return null;
+    }*/
 }

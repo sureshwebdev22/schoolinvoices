@@ -1,5 +1,6 @@
 package com.kvn.schoolinvoices.service.repository;
 
+import com.kvn.schoolinvoices.entity.Parent;
 import com.kvn.schoolinvoices.entity.Student;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -30,5 +31,12 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             Pageable pageable);
 
     boolean existsByAdmissionNo(String admissionNo);
+
+    Page<Student> findByAdmissionNoContainingIgnoreCaseAndFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(
+            String admissionNo,
+            String firstName,
+            String lastName,
+            Pageable pageable
+    );
 
 }
