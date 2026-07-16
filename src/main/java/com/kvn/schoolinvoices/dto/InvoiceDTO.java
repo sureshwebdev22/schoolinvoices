@@ -28,4 +28,6 @@ public class InvoiceDTO {
 
     private List<InvoiceItemDTO> invoiceItems;
 
+    private StudentDTO studentDTO;
+
 }

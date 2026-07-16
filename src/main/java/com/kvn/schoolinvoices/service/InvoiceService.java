@@ -21,6 +21,7 @@ import java.time.LocalDate;
 import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -108,7 +109,21 @@ public class InvoiceService {
                 .dueDate(invoice.getDueDate())
                 .studentId(invoice.getStudent().getStudentId())
                 .invoiceItems(convertInvoiceItemsToDto(invoice.getInvoiceItems()))
+                .studentDTO(convertStudentTodto(invoice.getStudent()))
                 .build();
+        return build;
+
+    }
+
+    private StudentDTO convertStudentTodto(Student student) {
+
+        StudentDTO build = StudentDTO.builder().studentId(student.getStudentId())
+                .firstName(student.getFirstName())
+                .lastName(student.getLastName())
+                .admissionNo(student.getAdmissionNo())
+                .status(String.valueOf(student.getStatus()))
+                .sectionName(student.getSectionName())
+                .className(student.getClassName()).build();
         return build;
 
     }
@@ -125,4 +140,9 @@ public class InvoiceService {
                 .build();
     }
 
+    public Optional<InvoiceDTO> getInvoice(Long invoiceId) {
+        Optional<InvoiceDTO> invoiceDTO = invoiceRepository.findById(invoiceId).map(this::convertToDto);
+        return invoiceDTO;
+       
+    }
 }

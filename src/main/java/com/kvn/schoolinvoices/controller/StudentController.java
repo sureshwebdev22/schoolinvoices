@@ -75,4 +75,13 @@ public class StudentController {
         return studentService.searchStudents(searchDTO, pageable);
     }
 
+    @PutMapping("/students/{id}")
+    @PreAuthorize("hasRole('SCHOOL_ADMIN')")
+    public ResponseEntity<StudentDTO> updateStudent(@PathVariable("id") Long id,
+            @RequestBody StudentDTO studentDTO) {
+
+        return ResponseEntity.ok(
+                studentService.updateStudent(id,studentDTO));
+    }
+
 }
