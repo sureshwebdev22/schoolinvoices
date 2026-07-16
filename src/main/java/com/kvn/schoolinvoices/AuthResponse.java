@@ -12,4 +12,5 @@ public class AuthResponse {
   private String accessToken;
   private String refreshToken;
   private String tokenType; // e.g. "Bearer"
+  private String role;
 }

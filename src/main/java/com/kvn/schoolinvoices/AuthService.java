@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,7 +55,15 @@ public class AuthService {
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
     );
 
+
     CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    String role1 = userDetails.getAuthorities()
+            .stream()
+            .findFirst()
+            .map(GrantedAuthority::getAuthority)
+            .orElse(null);
+
+    System.out.println("Role: " + role1);
 
     String accessToken = jwtService.generateAccessToken(userDetails);
     String refreshToken = jwtService.generateRefreshToken(userDetails);
@@ -62,7 +71,9 @@ public class AuthService {
     return AuthResponse.builder()
         .accessToken(accessToken)
         .refreshToken(refreshToken)
+
         .tokenType("Bearer")
+            .role(role1)
         .build();
   }
 
