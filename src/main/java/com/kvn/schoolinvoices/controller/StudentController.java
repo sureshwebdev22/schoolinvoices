@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200")
-@RequestMapping("/api/schooladmin")
+@RequestMapping("/api/students")
 public class StudentController {
 
     @Autowired
@@ -28,7 +28,7 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    @GetMapping("/students")
+    @GetMapping("")
     public ResponseEntity<Page<StudentDTO>> getStudents(
 
             @RequestParam(required = false)
@@ -47,15 +47,15 @@ public class StudentController {
                         pageable));
     }
 
-    @GetMapping("/students/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<StudentDTO> getStudentById(@PathVariable Long id) {
 
         StudentDTO student = studentService.getStudentById(id);
         return ResponseEntity.ok(student);
     }
 
-    @PostMapping("/students")
-    @PreAuthorize("hasRole('SCHOOL_ADMIN')")
+    @PostMapping("")
+   // @PreAuthorize("hasRole('SCHOOL_ADMIN')")
     public ResponseEntity<StudentDTO> createStudent(
             @RequestBody StudentDTO studentDTO) {
 
@@ -63,8 +63,8 @@ public class StudentController {
                 studentService.createStudent(studentDTO));
     }
 
-    @PostMapping("/students/search")
-    @PreAuthorize("hasRole('SCHOOL_ADMIN')")
+    @PostMapping("/search")
+ //   @PreAuthorize("hasRole('SCHOOL_ADMIN')")
     public Page<StudentDTO> searchStudents(
             @RequestBody StudentDTO searchDTO,
             @RequestParam("page") int page,
@@ -75,8 +75,8 @@ public class StudentController {
         return studentService.searchStudents(searchDTO, pageable);
     }
 
-    @PutMapping("/students/{id}")
-    @PreAuthorize("hasRole('SCHOOL_ADMIN')")
+    @PutMapping("/{id}")
+//    @PreAuthorize("hasRole('SCHOOL_ADMIN')")
     public ResponseEntity<StudentDTO> updateStudent(@PathVariable("id") Long id,
             @RequestBody StudentDTO studentDTO) {
 

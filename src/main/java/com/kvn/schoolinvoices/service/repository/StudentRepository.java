@@ -1,5 +1,6 @@
 package com.kvn.schoolinvoices.service.repository;
 
+import com.kvn.schoolinvoices.AppUser;
 import com.kvn.schoolinvoices.entity.Parent;
 import com.kvn.schoolinvoices.entity.Student;
 import org.springframework.data.domain.Page;
@@ -19,15 +20,15 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("""
             SELECT s
             FROM Student s
-            WHERE (:search IS NULL OR
+            WHERE   s.user.id = :userId and (:search IS NULL OR
                    LOWER(s.admissionNo) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(s.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(s.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(s.className) LIKE LOWER(CONCAT('%', :search, '%'))
-                  )
+                  ) 
             """)
     Page<Student> searchStudents(
-            @Param("search") String search,
+            @Param("search") String search, Long  userId,
             Pageable pageable);
 
     boolean existsByAdmissionNo(String admissionNo);

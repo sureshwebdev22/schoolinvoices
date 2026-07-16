@@ -35,9 +35,17 @@ public class StudentService {
     public Page<StudentDTO> searchStudents(
             String search,
             Pageable pageable) {
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+
+        AppUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         return studentRepository
-                .searchStudents(search, pageable)
+                .searchStudents(search,user.getId(), pageable)
                 .map(this::convertToDto);
     }
 
