@@ -30,6 +30,9 @@ public class Invoice {
 
     private LocalDate dueDate;
 
+    @Column
+    private Long parentId;
+
     private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)

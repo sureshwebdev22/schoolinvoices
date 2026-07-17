@@ -44,10 +44,19 @@ public class StudentService {
         AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        return studentRepository
-                .searchStudents(search,user.getId(), pageable)
-                .map(this::convertToDto);
+
+        if (user.getRole()!=null && user.getRole().equals("parent")){
+            return studentRepository
+                    .searchStudentsByUser(search,user.getId(), pageable)
+                    .map(this::convertToDto);
+        }
+        else{
+            return studentRepository
+                    .searchStudents(search, pageable)
+                    .map(this::convertToDto);
+        }
     }
+
 
     private StudentDTO convertToDto(Student student) {
 
@@ -59,6 +68,7 @@ public class StudentService {
                 .lastName(student.getLastName())
                 .gender(student.getGender())
                 .parentName(        student.getUser().getFullName())
+                .parentId(student.getUser().getId())
 
             //    .dob(LocalDate.parse(student.getDob()))
                 .className(student.getClassName())
@@ -80,6 +90,7 @@ public class StudentService {
     }
 
     public StudentDTO getStudentById(Long id) {
+
         return studentRepository.findById(id).map(this::convertToDto)
                 .orElseThrow(() ->
                         new RuntimeException("Student not found with id: " + id));

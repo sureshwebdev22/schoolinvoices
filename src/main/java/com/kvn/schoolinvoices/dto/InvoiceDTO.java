@@ -25,6 +25,8 @@ public class InvoiceDTO {
 
     private String invoiceNumber;
 
+    private Long parentId;
+
 
     private List<InvoiceItemDTO> invoiceItems;
 

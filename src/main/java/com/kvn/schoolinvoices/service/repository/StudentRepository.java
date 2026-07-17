@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
@@ -20,7 +21,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query("""
             SELECT s
             FROM Student s
-            WHERE   s.user.id = :userId and (:search IS NULL OR
+            WHERE    (:search IS NULL OR
                    LOWER(s.admissionNo) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(s.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
                    OR LOWER(s.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
@@ -28,7 +29,7 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
                   ) 
             """)
     Page<Student> searchStudents(
-            @Param("search") String search, Long  userId,
+            @Param("search") String search,
             Pageable pageable);
 
     boolean existsByAdmissionNo(String admissionNo);
@@ -40,4 +41,15 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             Pageable pageable
     );
 
+    @Query("""
+            SELECT s
+            FROM Student s
+            WHERE   s.user.id = :userId and (:search IS NULL OR
+                   LOWER(s.admissionNo) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(s.firstName) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(s.lastName) LIKE LOWER(CONCAT('%', :search, '%'))
+                   OR LOWER(s.className) LIKE LOWER(CONCAT('%', :search, '%'))
+                  ) 
+            """)
+    Page<Student> searchStudentsByUser(String search, Long userId, Pageable pageable);
 }

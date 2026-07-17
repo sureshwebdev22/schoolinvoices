@@ -1,5 +1,7 @@
 package com.kvn.schoolinvoices.service;
 
+import com.kvn.schoolinvoices.AppUser;
+import com.kvn.schoolinvoices.UserRepository;
 import com.kvn.schoolinvoices.dto.InvoiceDTO;
 import com.kvn.schoolinvoices.dto.InvoiceItemDTO;
 import com.kvn.schoolinvoices.dto.StudentDTO;
@@ -14,6 +16,7 @@ import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -33,6 +36,9 @@ public class InvoiceService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public Invoice save(InvoiceDTO dto) {
 
         Student student =
@@ -45,6 +51,7 @@ public class InvoiceService {
         invoice.setInvoiceDate(dto.getInvoiceDate());
         invoice.setDueDate(dto.getDueDate());
         invoice.setStatus(InvoiceStatus.UNPAID);
+        invoice.setParentId(dto.getParentId());
 
         List<InvoiceItem> items = new ArrayList<>();
 
@@ -97,7 +104,24 @@ public class InvoiceService {
 
 
     public Page<InvoiceDTO> searchInvoices(String search, Pageable pageable) {
-        return invoiceRepository.searchInvoices(search, pageable).map(this::convertToDto);
+        String email = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getName();
+
+
+        AppUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRole()!=null && user.getRole().equals("parent")){
+            return invoiceRepository.searchInvoicesByUser(user.getId(),search, pageable).map(this::convertToDto);
+
+        }
+        else{
+            return invoiceRepository.searchInvoices(search, pageable).map(this::convertToDto);
+
+        }
+
     }
 
     private InvoiceDTO convertToDto(Invoice invoice) {
