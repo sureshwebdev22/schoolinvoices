@@ -63,7 +63,7 @@ public class AuthService {
             .map(GrantedAuthority::getAuthority)
             .orElse(null);
 
-    System.out.println("Role: " + role1);
+
 
     String accessToken = jwtService.generateAccessToken(userDetails);
     String refreshToken = jwtService.generateRefreshToken(userDetails);

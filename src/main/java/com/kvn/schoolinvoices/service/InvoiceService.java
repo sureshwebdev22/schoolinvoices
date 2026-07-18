@@ -128,7 +128,9 @@ public class InvoiceService {
 
         InvoiceDTO build = InvoiceDTO.builder().invoiceID(invoice.getInvoiceId())
                 .invoiceNumber(invoice.getInvoiceNumber())
-
+                .totalAmount(invoice.getTotalAmount())
+                .balanceAmount(invoice.getBalanceAmount())
+                .paidAmount(invoice.getPaidAmount())
                 .invoiceDate(invoice.getInvoiceDate())
                 .dueDate(invoice.getDueDate())
                 .studentId(invoice.getStudent().getStudentId())

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -26,6 +27,12 @@ public class InvoiceDTO {
     private String invoiceNumber;
 
     private Long parentId;
+
+    private BigDecimal totalAmount;
+
+    private BigDecimal paidAmount = BigDecimal.ZERO;
+
+    private BigDecimal balanceAmount;
 
 
     private List<InvoiceItemDTO> invoiceItems;

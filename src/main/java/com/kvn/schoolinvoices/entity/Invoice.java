@@ -35,6 +35,10 @@ public class Invoice {
 
     private BigDecimal totalAmount;
 
+    private BigDecimal paidAmount = BigDecimal.ZERO;
+
+    private BigDecimal balanceAmount;
+
     @Enumerated(EnumType.STRING)
     private InvoiceStatus status;
 
@@ -42,6 +46,11 @@ public class Invoice {
             cascade=CascadeType.ALL,
             orphanRemoval=true)
     private List<InvoiceItem> invoiceItems = new ArrayList<>();
+
+    @OneToMany(mappedBy = "invoice",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Payment> payments = new ArrayList<>();
 
     // getters/setters
 }
