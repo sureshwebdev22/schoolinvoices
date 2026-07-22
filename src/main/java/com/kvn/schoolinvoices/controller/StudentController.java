@@ -22,8 +22,8 @@ import java.util.Map;
 @RequestMapping("/api/students")
 public class StudentController {
 
-    @Autowired
-    private StudentRepository studentRepository;
+   // @Autowired
+ //   private StudentRepository studentRepository;
 
     @Autowired
     private StudentService studentService;
