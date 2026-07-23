@@ -11,7 +11,6 @@ import com.kvn.schoolinvoices.entity.InvoiceStatus;
 import com.kvn.schoolinvoices.entity.Student;
 import com.kvn.schoolinvoices.service.repository.InvoiceRepository;
 import com.kvn.schoolinvoices.service.repository.StudentRepository;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -81,6 +80,7 @@ public class InvoiceService {
         invoice.setInvoiceItems(items);
 
         invoice.setTotalAmount(grandTotal);
+        invoice.setBalanceAmount(grandTotal);
 
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
