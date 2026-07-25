@@ -1,8 +1,8 @@
 #!/bin/bash
 
-JAR=$(ls /home/ec2-user/app/*.jar | head -1)
+JAR=$(ls /home/ec2-user/app1/*.jar | head -1)
 
-cp "$JAR" /home/ec2-user/app/app.jar
+cp "$JAR" /home/ec2-user/app1/app.jar
 
 sudo systemctl restart springboot
 
