@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/payments")
 @RequiredArgsConstructor
-@CrossOrigin
+
 public class PaymentController {
 
     private final PaymentService paymentService;

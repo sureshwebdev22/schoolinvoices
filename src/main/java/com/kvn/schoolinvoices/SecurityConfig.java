@@ -60,7 +60,8 @@ public class SecurityConfig {
             new CorsConfiguration();
 
     configuration.setAllowedOrigins(
-            List.of("http://localhost:4200","http://localhost:8080","http://52.66.237.193"));
+            List.of("http://localhost:4200","http://localhost:8080",
+                    "http://52.66.237.193","http://ec2-52-66-237-193.ap-south-1.compute.amazonaws.com/"));
 
     configuration.setAllowedMethods(
             List.of(
