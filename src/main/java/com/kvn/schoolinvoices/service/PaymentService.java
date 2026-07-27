@@ -61,7 +61,6 @@ public class PaymentService {
     }
 
     public List<Payment> getPaymentHistory(Long invoiceId) {
-
         return paymentRepository.findByInvoiceInvoiceIdOrderByPaymentDateDesc(invoiceId);
 
     }

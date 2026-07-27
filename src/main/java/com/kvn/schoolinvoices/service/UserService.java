@@ -4,6 +4,7 @@ import com.kvn.schoolinvoices.*;
 import com.kvn.schoolinvoices.dto.AppUserDto;
 import com.kvn.schoolinvoices.dto.StudentDTO;
 import com.kvn.schoolinvoices.entity.Student;
+import com.kvn.schoolinvoices.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -70,9 +71,16 @@ public class UserService {
 
 
     public Page<AppUserDto> searchUsers(String search, Pageable pageable) {
-        return userRepository
+        Page<AppUser> users = userRepository.searchUsers(search, pageable);
+
+        if (users.isEmpty()) {
+            throw new ResourceNotFoundException("No users found.");
+        }
+
+        return users.map(this::convertToDto);
+     /*   return userRepository
                 .searchUsers(search, pageable)
-                .map(this::convertToDto);
+                .map(this::convertToDto);*/
     }
 
     private AppUserDto convertToDto(AppUser appUser) {

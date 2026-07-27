@@ -9,6 +9,7 @@ import com.kvn.schoolinvoices.entity.Invoice;
 import com.kvn.schoolinvoices.entity.Parent;
 import com.kvn.schoolinvoices.entity.Student;
 import com.kvn.schoolinvoices.entity.StudentStatus;
+import com.kvn.schoolinvoices.exception.ResourceNotFoundException;
 import com.kvn.schoolinvoices.service.repository.StudentRepository;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -49,20 +50,26 @@ public class StudentService {
         AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> {
                     logger.error("User not found with email: {}", email);
-                    return new RuntimeException("User not found");
+                    return new ResourceNotFoundException("User not found");
                 });
 
         if (user.getRole()!=null && user.getRole().equals("parent")){
             logger.info("Searching students for parent user ID: {}", user.getId());
-            return studentRepository
-                    .searchStudentsByUser(search,user.getId(), pageable)
-                    .map(this::convertToDto);
+            Page<Student> students = studentRepository
+                    .searchStudentsByUser(search,user.getId(), pageable);
+            if (students == null || students.isEmpty()) {
+                throw new ResourceNotFoundException("No students found for parent user");
+            }
+            return students.map(this::convertToDto);
         }
         else{
             logger.info("Searching students with search term: {} for admin/other role", search);
-            return studentRepository
-                    .searchStudents(search, pageable)
-                    .map(this::convertToDto);
+            Page<Student> students = studentRepository
+                    .searchStudents(search, pageable);
+            if (students == null || students.isEmpty()) {
+                throw new ResourceNotFoundException("No students found for parent user");
+            }
+            return students.map(this::convertToDto);
         }
     }
 
@@ -103,7 +110,7 @@ public class StudentService {
         return studentRepository.findById(id).map(this::convertToDto)
                 .orElseThrow(() -> {
                     logger.error("Student not found with id: {}", id);
-                    return new RuntimeException("Student not found with id: " + id);
+                    return new ResourceNotFoundException("Student not found with id: " + id);
                 });
     }
 
@@ -112,7 +119,7 @@ public class StudentService {
         Student existingStudent = studentRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("Student not found with id: {}", id);
-                    return new RuntimeException("Student not found with id: " + id);
+                    return new ResourceNotFoundException("Student not found with id: " + id);
                 });
 
         existingStudent.setAdmissionNo(student.getAdmissionNo());
@@ -134,7 +141,7 @@ public class StudentService {
 
         if (studentRepository.existsByAdmissionNo(dto.getAdmissionNo())) {
             logger.warn("Admission Number already exists: {}", dto.getAdmissionNo());
-            throw new RuntimeException("Admission Number already exists");
+            throw new ResourceNotFoundException("Admission Number already exists");
         }
 
         String email = SecurityContextHolder

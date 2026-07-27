@@ -4,8 +4,8 @@ import com.kvn.schoolinvoices.AppUser;
 import com.kvn.schoolinvoices.UserRepository;
 import com.kvn.schoolinvoices.dto.AppUserDto;
 import com.kvn.schoolinvoices.dto.ParentDTO;
-import com.kvn.schoolinvoices.dto.ParentSearchDTO;
 import com.kvn.schoolinvoices.entity.Parent;
+import com.kvn.schoolinvoices.exception.ResourceNotFoundException;
 import com.kvn.schoolinvoices.service.repository.ParentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Service
@@ -32,7 +31,7 @@ public class ParentService {
 
 
         AppUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException( "User not found"));
 
         Parent parent = new Parent();
         parent.setFatherName(dto.getFatherName());
@@ -40,7 +39,7 @@ public class ParentService {
         parent.setAddress(dto.getAddress());
         parent.setUser(user);
 
-        Parent p= parentRepository.save(parent);
+        parentRepository.save(parent);
         return ResponseEntity.ok(
                 Map.of("message", "Student deleted successfully")
         );
@@ -52,25 +51,29 @@ public class ParentService {
     public Page<AppUserDto> searchParents(
             AppUserDto appUserDto,
             Pageable pageable) {
+        Page<AppUser> users = userRepository
+                .findByFullNameContainingIgnoreCaseAndEmailContainingIgnoreCaseAndMobileNoContainingIgnoreCaseAndAddressContainingIgnoreCase(
+                        appUserDto.getFullName(),
+                        appUserDto.getEmail(),
+                        appUserDto.getMobileNo(),
+                        appUserDto.getAddress(),
+                        pageable);
+
+        if (users.isEmpty()) {
+            throw new ResourceNotFoundException("No parent users found.");
+        }
+
+        return users.map(appUser -> new AppUserDto(
+                appUser.getId(),
+                appUser.getFullName(),
+                appUser.getEmail(),
+                appUser.getMobileNo(),
+                appUser.getAddress()));
+        /*
 
         return   userRepository.findByFullNameContainingIgnoreCaseAndEmailContainingIgnoreCaseAndMobileNoContainingIgnoreCaseAndAddressContainingIgnoreCase(
                 appUserDto.getFullName(), appUserDto.getEmail(), appUserDto.getMobileNo(),
                 appUserDto.getAddress(), pageable
-        ).map(appUser -> new AppUserDto(appUser.getId(), appUser.getFullName(), appUser.getEmail(),appUser.getMobileNo(),appUser.getAddress()));
-        // return byFullNameContainingIgnoreCaseAndEmailContainingIgnoreCaseAndMobileNoContainingIgnoreCaseAndAddressContainingIgnoreCase;
-
-      /*  return parentRepository
-                .findByFatherNameContainingIgnoreCaseAndMotherNameContainingIgnoreCaseAndAddressContainingIgnoreCase(
-                        searchDTO.getFatherName() == null ? "" : searchDTO.getFatherName(),
-                        searchDTO.getMotherName() == null ? "" : searchDTO.getMotherName(),
-                        searchDTO.getAddress() == null ? "" : searchDTO.getAddress(),
-                        pageable)
-                .map(parent -> new ParentDTO(
-                        parent.getFatherName(),
-                        parent.getMotherName(),
-                        parent.getAddress(),
-                        parent.getParentId()
-                )); */
-        //  return null;
-    }
+        ).map(appUser -> new AppUserDto(appUser.getId(), appUser.getFullName(), appUser.getEmail(), appUser.getMobileNo(), appUser.getAddress()));
+    */}
 }
