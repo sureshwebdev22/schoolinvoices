@@ -9,6 +9,7 @@ import com.kvn.schoolinvoices.entity.Invoice;
 import com.kvn.schoolinvoices.entity.InvoiceItem;
 import com.kvn.schoolinvoices.entity.InvoiceStatus;
 import com.kvn.schoolinvoices.entity.Student;
+import com.kvn.schoolinvoices.exception.ResourceNotFoundException;
 import com.kvn.schoolinvoices.service.repository.InvoiceRepository;
 import com.kvn.schoolinvoices.service.repository.StudentRepository;
 import jakarta.transaction.Transactional;
@@ -129,17 +130,23 @@ public class InvoiceService {
 
         AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        Page<Invoice> invoicePage =null;
         if (user.getRole()!=null && user.getRole().equals("parent")){
             logger.debug("User is a parent, filtering invoices by user ID: {}", user.getId());
-            return invoiceRepository.searchInvoicesByUser(user.getId(),search, pageable).map(this::convertToDto);
+          //  return invoiceRepository.searchInvoicesByUser(user.getId(),search, pageable).map(this::convertToDto);
+            invoicePage = invoiceRepository.searchInvoicesByUser(user.getId(),search, pageable);
 
         }
         else{
             logger.debug("User is an admin/staff, retrieving all invoices");
-            return invoiceRepository.searchInvoices(search, pageable).map(this::convertToDto);
+            invoicePage = invoiceRepository.searchInvoices(search, pageable);
+         //   return invoiceRepository.searchInvoices(search, pageable).map(this::convertToDto);
 
         }
+        if(invoicePage.isEmpty()){
+            throw new ResourceNotFoundException("Invoices not found");
+        }
+        return invoicePage.map(this::convertToDto);
 
     }
 
