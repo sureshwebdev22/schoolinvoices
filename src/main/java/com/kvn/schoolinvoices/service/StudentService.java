@@ -11,6 +11,8 @@ import com.kvn.schoolinvoices.entity.Student;
 import com.kvn.schoolinvoices.entity.StudentStatus;
 import com.kvn.schoolinvoices.service.repository.StudentRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class StudentService {
+
+    private static final Logger logger = LoggerFactory.getLogger(StudentService.class);
 
     @Autowired
     private StudentRepository studentRepository;
@@ -40,17 +44,22 @@ public class StudentService {
                 .getAuthentication()
                 .getName();
 
+        logger.info("Searching students with search term: {} for user: {}", search, email);
 
         AppUser user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
+                .orElseThrow(() -> {
+                    logger.error("User not found with email: {}", email);
+                    return new RuntimeException("User not found");
+                });
 
         if (user.getRole()!=null && user.getRole().equals("parent")){
+            logger.info("Searching students for parent user ID: {}", user.getId());
             return studentRepository
                     .searchStudentsByUser(search,user.getId(), pageable)
                     .map(this::convertToDto);
         }
         else{
+            logger.info("Searching students with search term: {} for admin/other role", search);
             return studentRepository
                     .searchStudents(search, pageable)
                     .map(this::convertToDto);
@@ -90,35 +99,41 @@ public class StudentService {
     }
 
     public StudentDTO getStudentById(Long id) {
-
+        logger.info("Retrieving student with ID: {}", id);
         return studentRepository.findById(id).map(this::convertToDto)
-                .orElseThrow(() ->
-                        new RuntimeException("Student not found with id: " + id));
+                .orElseThrow(() -> {
+                    logger.error("Student not found with id: {}", id);
+                    return new RuntimeException("Student not found with id: " + id);
+                });
     }
 
     public StudentDTO updateStudent(Long id, StudentDTO student) {
-
+        logger.info("Updating student with ID: {}", id);
         Student existingStudent = studentRepository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Student not found with id: " + id));
+                .orElseThrow(() -> {
+                    logger.error("Student not found with id: {}", id);
+                    return new RuntimeException("Student not found with id: " + id);
+                });
 
         existingStudent.setAdmissionNo(student.getAdmissionNo());
         existingStudent.setFirstName(student.getFirstName());
         existingStudent.setLastName(student.getLastName());
         existingStudent.setGender(student.getGender());
-    //    existingStudent.setDob(String.valueOf(student.getDob()));
         existingStudent.setClassName(student.getClassName());
         existingStudent.setSectionName(student.getSectionName());
         existingStudent.setStatus(StudentStatus.valueOf(student.getStatus()));
 
         studentRepository.save(existingStudent);
+        logger.info("Student with ID: {} updated successfully", id);
 
         return student;
     }
 
     public StudentDTO createStudent(StudentDTO dto) {
+        logger.info("Creating new student with admission number: {}", dto.getAdmissionNo());
 
         if (studentRepository.existsByAdmissionNo(dto.getAdmissionNo())) {
+            logger.warn("Admission Number already exists: {}", dto.getAdmissionNo());
             throw new RuntimeException("Admission Number already exists");
         }
 
@@ -132,21 +147,17 @@ public class StudentService {
         student.setFirstName(dto.getFirstName());
         student.setLastName(dto.getLastName());
         student.setGender(dto.getGender());
-     //   student.setDob(String.valueOf(dto.getDob()));
         student.setClassName(dto.getClassName());
         student.setSectionName(dto.getSectionName());
         student.setStatus(StudentStatus.valueOf(dto.getStatus()));
         student.setCreatedBy(email);
-    //    Parent parent = new Parent();
-     //   parent.setParentId(dto.getParentId());
-    //    student.setParent(parent);
-     //  Optional<AppUser> user1=  userRepository.findById(dto.getParentId());
 
-       AppUser appUser = new AppUser();
-       appUser.setId(dto.getParentId());
+        AppUser appUser = new AppUser();
+        appUser.setId(dto.getParentId());
         student.setUser(appUser);
 
         Student savedStudent = studentRepository.save(student);
+        logger.info("Student created successfully with ID: {}", savedStudent.getStudentId());
 
         dto.setStudentId(savedStudent.getStudentId());
 
@@ -155,15 +166,22 @@ public class StudentService {
 
     @Transactional
     public  void deleteStudent(Long id){
+        logger.info("Deleting student with ID: {}", id);
         studentRepository.deleteById(id);
+        logger.info("Student with ID: {} deleted successfully", id);
     }
 
     public Page<StudentDTO> searchStudents(StudentDTO searchDTO, Pageable pageable) {
+        logger.info("Searching students with admission number: {}, first name: {}, last name: {}",
+            searchDTO.getAdmissionNo(), searchDTO.getFirstName(), searchDTO.getLastName());
+
         Page<StudentDTO> map = studentRepository.findByAdmissionNoContainingIgnoreCaseAndFirstNameContainingIgnoreCaseAndLastNameContainingIgnoreCase(
                 searchDTO.getAdmissionNo(), searchDTO.getFirstName(), searchDTO.getLastName()
                 , pageable
         ).map(student -> new StudentDTO(student.getStudentId(), student.getAdmissionNo(), student.getFirstName(), student.getLastName(),
                 student.getClassName(), student.getSectionName(),student.getUser().getFullName()));
+
+        logger.info("Found {} students", map.getTotalElements());
         return map;
 
     }

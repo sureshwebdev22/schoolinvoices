@@ -12,6 +12,8 @@ import com.kvn.schoolinvoices.entity.Student;
 import com.kvn.schoolinvoices.service.repository.InvoiceRepository;
 import com.kvn.schoolinvoices.service.repository.StudentRepository;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +31,8 @@ import java.util.Optional;
 @Transactional
 public class InvoiceService {
 
+    private static final Logger logger = LoggerFactory.getLogger(InvoiceService.class);
+
     @Autowired
     private InvoiceRepository invoiceRepository;
 
@@ -40,9 +44,13 @@ public class InvoiceService {
 
     public Invoice save(InvoiceDTO dto) {
 
+        logger.info("Creating new invoice for student ID: {}", dto.getStudentId());
+
         Student student =
                 studentRepository.findById(dto.getStudentId())
                         .orElseThrow();
+
+        logger.debug("Found student: {} {}", student.getFirstName(), student.getLastName());
 
         Invoice invoice = new Invoice();
 
@@ -82,12 +90,16 @@ public class InvoiceService {
         invoice.setTotalAmount(grandTotal);
         invoice.setBalanceAmount(grandTotal);
 
+        logger.debug("Invoice total amount: {}", grandTotal);
+
         Invoice savedInvoice = invoiceRepository.save(invoice);
 
         savedInvoice.setInvoiceNumber(
                 "INV-" + LocalDate.now().getYear() + "-" +
                         String.format("%06d", savedInvoice.getInvoiceId())
         );
+
+        logger.info("Invoice created successfully with number: {}", savedInvoice.getInvoiceNumber());
 
         return invoiceRepository.save(savedInvoice);
 
@@ -97,9 +109,13 @@ public class InvoiceService {
 
         Long nextId = invoiceRepository.getNextId();
 
-        return String.format("INV-%d-%06d",
+        String invoiceNumber = String.format("INV-%d-%06d",
                 Year.now().getValue(),
                 nextId);
+
+        logger.debug("Generated next invoice number: {}", invoiceNumber);
+
+        return invoiceNumber;
     }
 
 
@@ -109,15 +125,18 @@ public class InvoiceService {
                 .getAuthentication()
                 .getName();
 
+        logger.info("Searching invoices for user: {} with search term: {}", email, search);
 
         AppUser user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (user.getRole()!=null && user.getRole().equals("parent")){
+            logger.debug("User is a parent, filtering invoices by user ID: {}", user.getId());
             return invoiceRepository.searchInvoicesByUser(user.getId(),search, pageable).map(this::convertToDto);
 
         }
         else{
+            logger.debug("User is an admin/staff, retrieving all invoices");
             return invoiceRepository.searchInvoices(search, pageable).map(this::convertToDto);
 
         }
@@ -167,7 +186,13 @@ public class InvoiceService {
     }
 
     public Optional<InvoiceDTO> getInvoice(Long invoiceId) {
+        logger.info("Fetching invoice with ID: {}", invoiceId);
         Optional<InvoiceDTO> invoiceDTO = invoiceRepository.findById(invoiceId).map(this::convertToDto);
+        if (invoiceDTO.isPresent()) {
+            logger.debug("Invoice found: {}", invoiceId);
+        } else {
+            logger.warn("Invoice not found with ID: {}", invoiceId);
+        }
         return invoiceDTO;
        
     }
