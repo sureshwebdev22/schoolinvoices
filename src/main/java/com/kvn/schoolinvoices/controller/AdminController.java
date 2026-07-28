@@ -28,9 +28,8 @@ public class AdminController {
   @GetMapping("/dashboard")
   @PreAuthorize("hasRole('SCHOOL_ADMIN')")
   public ResponseEntity<String> dashboard() {
-    List<String> list = new ArrayList<>();
-    list.add("a");
-    System.out.println(list.size());
+
+
     return ResponseEntity.ok("Hello from ADMIN dashboard");
   }
 
