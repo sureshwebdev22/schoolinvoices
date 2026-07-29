@@ -8,3 +8,4 @@ cp -f "$JAR" /home/ec2-user/app2/app.jar
 
 sudo systemctl daemon-reload
 sudo systemctl restart springboot
+sudo systemctl restart nginx

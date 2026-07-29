@@ -28,7 +28,7 @@ public class AdminController {
   @GetMapping("/dashboard")
   @PreAuthorize("hasRole('SCHOOL_ADMIN')")
   public ResponseEntity<String> dashboard() {
-//test
+ //test
 
     return ResponseEntity.ok("Hello from ADMIN dashboard");
   }
