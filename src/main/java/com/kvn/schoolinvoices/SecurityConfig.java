@@ -61,7 +61,7 @@ public class SecurityConfig {
 
     configuration.setAllowedOrigins(
             List.of("http://localhost:4200","http://localhost:8080",
-                    "http://13.232.5.86","http://ec2-13-232-5-86.ap-south-1.compute.amazonaws.com","http://13.232.5.86:8080","http://ec2-13-232-5-86.ap-south-1.compute.amazonaws.com:8080"));
+                    "http://13.204.53.8","http://ec2-13-204-53-8.ap-south-1.compute.amazonaws.com","http://13.204.53.8:8080","http://ec2-13-204-53-8.ap-south-1.compute.amazonaws.com:8080"));
 
     configuration.setAllowedMethods(
             List.of(
