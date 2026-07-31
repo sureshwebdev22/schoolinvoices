@@ -1,5 +1,6 @@
 package com.kvn.schoolinvoices;
 
+import com.kvn.schoolinvoices.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -54,6 +55,11 @@ public class AuthService {
     Authentication authentication = authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
     );
+
+if(!authentication.isAuthenticated())    {
+  throw new ResourceNotFoundException("User not found");
+}
+
 
 
     CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
