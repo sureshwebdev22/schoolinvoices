@@ -22,7 +22,7 @@ public class RegisterRequest {
   private String email;
 
   @NotBlank
-  @Size(min = 6, message = "Password must be at least 6 characters")
+  @Size(min = 4, message = "Password must be at least 4au characters")
   private String password;
 
   // Optional: allow passing roles, otherwise default to ROLE_USER

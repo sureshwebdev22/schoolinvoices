@@ -1,6 +1,7 @@
 package com.kvn.schoolinvoices;
 
 import com.kvn.schoolinvoices.exception.ResourceNotFoundException;
+import com.kvn.schoolinvoices.exception.UserAlreadyExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -25,9 +26,17 @@ public class AuthService {
 
   @Transactional
   public AuthResponse register(RegisterRequest request) {
+
     if (userRepository.existsByEmail(request.getEmail())) {
-      throw new IllegalArgumentException("Email is already in use");
-    }
+      throw new UserAlreadyExistsException("Email is already in use");
+      }
+
+
+      Set rolesreq =  new HashSet();
+      rolesreq.add("ROLE_ADMIN");
+      request.setRoles(rolesreq);
+
+
 
     Set<Role> roles = resolveRoles(request.getRoles());
 
@@ -35,7 +44,7 @@ public class AuthService {
         .fullName(request.getFullName())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
-        .roles(roles)
+        .roles(roles).role("admin")
         .build();
 
     AppUser saved = userRepository.save(user);
