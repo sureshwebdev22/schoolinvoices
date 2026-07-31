@@ -33,7 +33,7 @@ public class AuthService {
 
 
       Set rolesreq =  new HashSet();
-      rolesreq.add("ROLE_ADMIN");
+      rolesreq.add("ROLE_SCHOOL_ADMIN");
       request.setRoles(rolesreq);
 
 
@@ -44,7 +44,7 @@ public class AuthService {
         .fullName(request.getFullName())
         .email(request.getEmail())
         .password(passwordEncoder.encode(request.getPassword()))
-        .roles(roles).role("admin")
+        .roles(roles).role("schooladmin")
         .build();
 
     AppUser saved = userRepository.save(user);
