@@ -65,13 +65,14 @@ public class AuthService {
         new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
     );
 
-if(!authentication.isAuthenticated())    {
+  if(!authentication.isAuthenticated())    {
   throw new ResourceNotFoundException("User not found");
-}
+  }
 
 
 
     CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    String fullName = userDetails.getFullName();
     String role1 = userDetails.getAuthorities()
             .stream()
             .findFirst()
@@ -88,7 +89,7 @@ if(!authentication.isAuthenticated())    {
         .refreshToken(refreshToken)
 
         .tokenType("Bearer")
-            .role(role1)
+            .role(role1).fullName(fullName)
         .build();
   }
 
