@@ -5,6 +5,7 @@ import com.kvn.schoolinvoices.dto.AppUserDto;
 import com.kvn.schoolinvoices.dto.StudentDTO;
 import com.kvn.schoolinvoices.entity.Student;
 import com.kvn.schoolinvoices.exception.ResourceNotFoundException;
+import com.kvn.schoolinvoices.exception.UserAlreadyExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -65,8 +66,12 @@ public class UserService {
             AppUser appUser =userRepository.save(user);
             return appUser;
         }
+        else{
 
-        return null;
+            throw new UserAlreadyExistsException("User with email " + appUserDto.getEmail() + " already exists.");
+        }
+
+        //return null;
         }
 
 
