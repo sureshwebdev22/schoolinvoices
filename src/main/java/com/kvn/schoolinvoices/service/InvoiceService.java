@@ -162,6 +162,7 @@ public class InvoiceService {
                 .studentId(invoice.getStudent().getStudentId())
                 .invoiceItems(convertInvoiceItemsToDto(invoice.getInvoiceItems()))
                 .studentDTO(convertStudentTodto(invoice.getStudent()))
+                .parentId(invoice.getParentId())
                 .build();
         return build;
 

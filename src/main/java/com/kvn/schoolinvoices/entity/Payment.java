@@ -1,6 +1,7 @@
 package com.kvn.schoolinvoices.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.kvn.schoolinvoices.AppUser;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -32,4 +33,18 @@ public class Payment {
     private String transactionReference;
 
     private String remarks;
+
+    private Long studentId;
+
+    private String studentName;
+
+    private String invoiceNumber;
+
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(
+            name = "user_id",
+            nullable = false
+    )
+    private AppUser user;
 }

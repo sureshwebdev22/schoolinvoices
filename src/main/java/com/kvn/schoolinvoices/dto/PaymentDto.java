@@ -1,17 +1,18 @@
 package com.kvn.schoolinvoices.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.springframework.web.servlet.support.JstlUtils;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Getter
-@Setter
-public class PaymentRequest {
-
-    private Long invoiceId;
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class PaymentDto {
 
     private BigDecimal amount;
 
@@ -28,7 +29,4 @@ public class PaymentRequest {
     private String studentName;
 
     private String invoiceNumber;
-
-    private Long parentId;
-
 }
