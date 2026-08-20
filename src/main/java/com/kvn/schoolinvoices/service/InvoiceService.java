@@ -121,11 +121,9 @@ public class InvoiceService {
 
 
     public Page<InvoiceDTO> searchInvoices(String search, Pageable pageable) {
-        String email = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getName();
 
+        AppUser appUser = (AppUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = appUser.getEmail();
         logger.info("Searching invoices for user: {} with search term: {}", email, search);
 
         AppUser user = userRepository.findByEmail(email)
