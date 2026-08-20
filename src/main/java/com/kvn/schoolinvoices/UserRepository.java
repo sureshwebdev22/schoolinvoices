@@ -30,5 +30,8 @@ public interface UserRepository extends JpaRepository<AppUser, Long> {
           String fullName, String email, String mobileNo, String address, Pageable pageable
         );
 
+  Optional<AppUser>
+  findByCognitoSub(String cognitoSub);
+
 
 }

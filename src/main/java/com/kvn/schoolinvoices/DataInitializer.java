@@ -49,13 +49,14 @@ public class DataInitializer {
         userRepository.save(admin);
       }
 
-      // Create admin user if not exist
+      // Create school admin user if not exist
       if (!userRepository.existsByEmail("schooladmin@example.com")) {
         AppUser schoolAdmin = AppUser.builder()
-                .fullName("Admin User")
+                .fullName("School Admin")
                 .email("schooladmin@example.com")
                 .password(passwordEncoder.encode("schooladmin123"))
                 .roles(Set.of(schoolAdminRole))
+                .cognitoSub("31f37dba-f0b1-7086-0ffd-203a15a30a97")
                 .build();
 
         userRepository.save(schoolAdmin);

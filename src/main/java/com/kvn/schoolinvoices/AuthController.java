@@ -13,11 +13,17 @@ public class AuthController {
   private final AuthService authService;
 
   @PostMapping("/register")
-  public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
-    return ResponseEntity.ok(authService.register(request));
+  public ResponseEntity<?> register(
+          @Valid
+          @RequestBody
+          RegisterRequest request) {
+
+    return ResponseEntity.ok(
+            authService.register(request)
+    );
   }
 
-  @PostMapping("/login")
+ /* @PostMapping("/login")
   public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
     return ResponseEntity.ok(authService.login(request));
   }
@@ -25,5 +31,5 @@ public class AuthController {
   @PostMapping("/refresh")
   public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshTokenRequest request) {
     return ResponseEntity.ok(authService.refreshToken(request));
-  }
+  } */
 }

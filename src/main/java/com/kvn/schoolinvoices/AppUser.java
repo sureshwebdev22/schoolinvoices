@@ -51,6 +51,9 @@ public class AppUser {
   @Column(length = 100)
   private String createdBy;
 
+  @Column(name = "cognito_sub", unique = true)
+  private  String cognitoSub;
+
   @ManyToMany(fetch = FetchType.EAGER)
   @JoinTable(
       name = "user_roles",
